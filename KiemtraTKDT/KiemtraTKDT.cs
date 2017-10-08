@@ -53,22 +53,22 @@ namespace KiemtraTKDT
                 if (!string.IsNullOrEmpty(drMaster["TGPB", DataRowVersion.Current].ToString()))
                 {
                     DateTime ngayPb = DateTime.Parse(drMaster["TGPB", DataRowVersion.Current].ToString());
-                    if ((thang <= 1) || (ngayPb.Year <= ngayct.Year && ngayPb.Month <= ngayct.Month))
-                    {
-                        XtraMessageBox.Show("Bắt buộc nhập tài khoản doanh thu", Config.GetValue("PackageName").ToString(), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        info.Result = false;
-                        return;
-                    }
-                } else
+                    if ((thang <= 1) && (ngayPb.Year <= ngayct.Year && ngayPb.Month <= ngayct.Month))
+                        showMsg();
+                }
+                else
                 {
                     if ((thang <= 1))
-                    {
-                        XtraMessageBox.Show("Bắt buộc nhập tài khoản doanh thu", Config.GetValue("PackageName").ToString(), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        info.Result = false;
-                        return;
-                    }
+                        showMsg();
                 }
             }
+        }
+
+        private void showMsg()
+        {
+            XtraMessageBox.Show("Bắt buộc nhập tài khoản doanh thu", Config.GetValue("PackageName").ToString(), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            info.Result = false;
+            return;
         }
     }
 }
