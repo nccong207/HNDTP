@@ -49,8 +49,8 @@ namespace DuAnVay
             gvHoVay.CellValueChanged += new DevExpress.XtraGrid.Views.Base.CellValueChangedEventHandler(gvHoVay_CellValueChanged);
             RepositoryItemGridLookUpEdit gluSoCMND = gcHoVay.RepositoryItems["SoCMND"] as RepositoryItemGridLookUpEdit;
             gluSoCMND.QueryCloseUp += new System.ComponentModel.CancelEventHandler(gluSoCMND_QueryCloseUp);
-            RepositoryItemGridLookUpEdit gluCMNDTK = gcHoVay.RepositoryItems["CMNDTK"] as RepositoryItemGridLookUpEdit;
-            gluCMNDTK.QueryCloseUp += new System.ComponentModel.CancelEventHandler(gluSoCMND_QueryCloseUp);
+            //RepositoryItemGridLookUpEdit gluCMNDTK = gcHoVay.RepositoryItems["CMNDTK"] as RepositoryItemGridLookUpEdit;
+            //gluCMNDTK.QueryCloseUp += new System.ComponentModel.CancelEventHandler(gluSoCMND_QueryCloseUp);
             //grdTT.Popup += new EventHandler(grdTT_Popup);
             data.FrmMain.Shown += new EventHandler(FrmMain_Shown);
             data.BsMain.DataSourceChanged += new EventHandler(BsMain_DataSourceChanged);
@@ -91,7 +91,7 @@ namespace DuAnVay
             if (data.BsMain.Current != null)
                 drMaster = (data.BsMain.Current as DataRowView).Row;
 
-            ds.Tables[0].ColumnChanged += new DataColumnChangeEventHandler(Master_ColumnChanged);
+            //ds.Tables[0].ColumnChanged += new DataColumnChangeEventHandler(Master_ColumnChanged);
             ds.Tables[1].ColumnChanged += new DataColumnChangeEventHandler(DTHoDan_ColumnChanged);
         }
 
@@ -278,7 +278,8 @@ namespace DuAnVay
             {
                 if (dt.Rows.Count == 0) return true;
 
-                XtraMessageBox.Show("Điều kiện vay chưa hợp lệ, vui lòng kiểm tra lại các yếu tố sau:\nĐộ tuổi: Nam từ 18-60 tuổi, Nữ: 18-55 tuổi\nHộ dân đang thuộc dự án vay vốn khác\nHộ dân đang là người thừa kế trong dự án khác\nHộ dân có số hộ khẩu trùng với người vay trong dự án khác", Config.GetValue("PackageName").ToString());
+                XtraMessageBox.Show("Điều kiện vay của người vay có số CMND " + SoCMND + " chưa hợp lệ, vui lòng kiểm tra lại các quy định sau:\nĐộ tuổi: Nam từ 18-65 tuổi, Nữ: 18-60 tuổi. Hộ dân không thuộc dự án vay vốn khác. Hộ dân không là người thừa kế trong dự án khác.\n\nNỘI DUNG LỖI: "
+                    + dt.Rows[0][0].ToString(), Config.GetValue("PackageName").ToString());
                 return false;
             }
         }

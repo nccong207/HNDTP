@@ -59,16 +59,24 @@ namespace ThuVonPhi
             if (ds == null) return;
             if (data.BsMain.Current != null)
                 drMaster = (data.BsMain.Current as DataRowView).Row;
-            //ds.Tables[0].ColumnChanged += new DataColumnChangeEventHandler(ThuVonPhi_MasterChanged);
-            ds.Tables[1].ColumnChanged += new DataColumnChangeEventHandler(ThuVonPhi_DetailChanged);
+            ds.Tables[0].ColumnChanged += new DataColumnChangeEventHandler(ThuVonPhi_MasterChanged);
+            //ds.Tables[1].ColumnChanged += new DataColumnChangeEventHandler(ThuVonPhi_DetailChanged);
         }
 
-        void  ThuVonPhi_MasterChanged(object sender, DataColumnChangeEventArgs e)
+        void ThuVonPhi_MasterChanged(object sender, DataColumnChangeEventArgs e)
         {
+            if (e.Column.ColumnName != "LaiSuat") return;
+            if (gv.DataRowCount == 0) return;
             
+            Cursor.Current = Cursors.WaitCursor;
+            string sql = string.Format("EXEC sp_MTVonPhi '{0}','{1}', {2}", drMaster["Ngay"], drMaster["MTDAID"], drMaster["LaiSuat"].ToString().Replace(",", "."));
+            using (DataTable dtHoVay = db.GetDataTable(sql))
+            {
+                SetHoVay(dtHoVay);
+            }
+            Cursor.Current = Cursors.Default;
         }
 
-        
         void ThuVonPhi_DetailChanged(object sender, DataColumnChangeEventArgs e)
         {
             // Báo khi thu phí trong hạn ko đúng với tiền còn lại
@@ -102,7 +110,6 @@ namespace ThuVonPhi
             //DateTime
             if (dateNgay.Properties.ReadOnly)
                 return;
-
             drMaster = (data.BsMain.Current as DataRowView).Row;
             if (drMaster["MTDAID"] == DBNull.Value || drMaster["Ngay"] == DBNull.Value)
             {
@@ -110,24 +117,13 @@ namespace ThuVonPhi
                 return;
             }
 
-            // Tạm thời bỏ kiểm soát trường hợp này - 11/03/2014
-//            string _sql = string.Format(@"  SELECT  MAX(Ngay) NgayCT
-//                                            FROM	MTVonPhi
-//                                            WHERE	Ngay >= '{0}' AND MTDAID = '{1}'"
-//                        , drMaster["Ngay"], drMaster["MTDAID"]);
-//            object obj = db.GetValue(_sql);
-//            if (obj != null && obj != DBNull.Value)
-//            {
-//                XtraMessageBox.Show(string.Format("Số liệu chưa hợp lệ!\nNgày thu Vốn/Phí mới nhất {0}"
-//                    , string.Format("{0:dd/MM/yyyy}", obj)), Config.GetValue("PackageName").ToString());
-//                return;
-//            }
-            
-            string sql = string.Format("EXEC sp_MTVonPhi '{0}','{1}'", drMaster["Ngay"], drMaster["MTDAID"]);
+            Cursor.Current = Cursors.WaitCursor;
+            string sql = string.Format("EXEC sp_MTVonPhi '{0}','{1}', {2}", drMaster["Ngay"], drMaster["MTDAID"], drMaster["LaiSuat"].ToString().Replace(",", "."));
             using (DataTable dtHoVay = db.GetDataTable(sql))
             {
                 SetHoVay(dtHoVay);
             }
+            Cursor.Current = Cursors.Default;
         }
 
         void SetHoVay(DataTable dtHoVay)
